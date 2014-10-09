@@ -57,7 +57,6 @@ public class BattleScreen extends BaseScreen {
 		stage.addActor(maestro);
 		espectro = new EspectroPlayer();
 		stage.addActor(espectro);
-		stage.addActor(texts);
 		stage.addActor(lifeUpdater);
 		marcadoresPuntuacion[0] = new MarcadorPuntuacion();
 		marcadoresPuntuacion[0].setX(640 - marcadoresPuntuacion[0].getWidth());
@@ -66,6 +65,7 @@ public class BattleScreen extends BaseScreen {
 		if (twoPlayers) {
 			stage.addActor(marcadoresPuntuacion[1]);
 		}
+		stage.addActor(texts);
 	}
 
 	private void startBattle() {
@@ -323,12 +323,12 @@ public class BattleScreen extends BaseScreen {
 		@Override
 		public void draw(Batch batch, float parentAlpha) {
 			if (showPlayer1) {
-				font.drawMultiLine(batch, "PLAYER 1", 500, 100, 100, HAlignment.CENTER);
-				font.drawMultiLine(batch, playerkeys[0], 500, 50, 100, HAlignment.CENTER);
+				font.drawMultiLine(batch, "PLAYER 1", 450, 100, 100, HAlignment.CENTER);
+				font.drawMultiLine(batch, playerkeys[0], 450, 50, 100, HAlignment.CENTER);
 			}
 			if (showPlayer2) {
-				font.drawMultiLine(batch, "PLAYER 2", 38, 100, 100, HAlignment.CENTER);
-				font.drawMultiLine(batch, playerkeys[1], 38, 50, 100, HAlignment.CENTER);
+				font.drawMultiLine(batch, "PLAYER 2", 88, 100, 100, HAlignment.CENTER);
+				font.drawMultiLine(batch, playerkeys[1], 88, 50, 100, HAlignment.CENTER);
 			}
 
 		}
