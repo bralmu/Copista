@@ -2,12 +2,14 @@ package com.madgeargames.copista.screens;
 
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Pixmap;
+import com.badlogic.gdx.graphics.Pixmap.Format;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.BitmapFont.HAlignment;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.scenes.scene2d.Actor;
+import com.badlogic.gdx.scenes.scene2d.Group;
 import com.badlogic.gdx.scenes.scene2d.actions.Actions;
 import com.badlogic.gdx.scenes.scene2d.ui.Image;
 import com.madgeargames.copista.Copista;
@@ -17,26 +19,12 @@ import com.madgeargames.copista.notes.NoteSetGenerator;
 public class LevelUpScreen extends BaseScreen {
 
 	static int playerId = -1;
-	float metrobarRotation = 45;
-	float metrobarRotationPeriod = .667f;
 	boolean wait = false;
 	float waitCountDown;
 	final float waitTime = 1.5f;
+	Metronome metronome;
 
 	public LevelUpScreen() {
-		Image bg = new Image(new Texture("levelup.png"));
-		bg.setCenterPosition(640 / 2, 360 / 2);
-		stage.addActor(bg);
-
-		// metrobar
-		Image metrobar = new Image(new Texture("metrobar.png"));
-		metrobar.setCenterPosition(640 / 3 * 2 + 640 / 6, 360 / 2);
-		metrobar.setOrigin(8, 0);
-		metrobar.rotateBy(metrobarRotation / 2);
-		metrobar.addAction(Actions.forever(Actions.sequence(
-				Actions.rotateBy(-metrobarRotation, metrobarRotationPeriod),
-				Actions.rotateBy(metrobarRotation, metrobarRotationPeriod))));
-		stage.addActor(metrobar);
 		// colors
 		stage.addActor(new Colors());
 		// sequences
@@ -45,6 +33,10 @@ public class LevelUpScreen extends BaseScreen {
 		stage.addActor(new Texts());
 		// waiter
 		stage.addActor(new Waiter());
+		// metronome
+		metronome = new Metronome();
+		metronome.setPosition(427 + (213 - 160) / 2, (360 - 300) / 2);
+		stage.addActor(metronome);
 
 	}
 
@@ -65,10 +57,10 @@ public class LevelUpScreen extends BaseScreen {
 				Copista.getInstance().setScreen(Copista.getInstance().battleScreen);
 			} else if (keyIndex == 2) {
 				BattleScreen.increaseSpeed();
+				metronome.increaseSpeed();
 				Copista.getInstance().setScreen(Copista.getInstance().battleScreen);
 			}
 		}
-
 	}
 
 	@Override
@@ -158,6 +150,92 @@ public class LevelUpScreen extends BaseScreen {
 
 	}
 
+	private class Metronome extends Actor {
+		Image bar, body;
+		Group group = new Group();
+		float metrobarRotation = 60;
+		float metrobarRotationPeriod = 1f;
+
+		public Metronome() {
+			Pixmap pixmap = new Pixmap(24, 200, Format.RGBA8888);
+			// bar
+			pixmap.setColor(Color.BLACK);
+			pixmap.fillRectangle(6, 0, 11, 200);
+			pixmap.setColor(Color.LIGHT_GRAY);
+			pixmap.fillRectangle(0, 0, 24, 30);
+			Texture texture = new Texture(pixmap);
+			pixmap.dispose();
+			bar = new Image(texture);
+			bar.setPosition(80 - 12, 90);
+			bar.setOrigin(12, 0);
+			bar.rotateBy(metrobarRotation / 2);
+			bar.addAction(Actions.forever(Actions.sequence(
+					Actions.rotateBy(-metrobarRotation, metrobarRotationPeriod),
+					Actions.rotateBy(metrobarRotation, metrobarRotationPeriod))));
+			// body
+			pixmap = new Pixmap(160, 300, Format.RGBA8888);
+			pixmap.setColor(Color.MAROON);
+			pixmap.fillRectangle(0, 200, 160, 300);
+			pixmap.setColor(Color.DARK_GRAY);
+			pixmap.fillTriangle(0, 200, 80, 0, 160, 200);
+			pixmap.setColor(Color.BLACK);
+			pixmap.fillCircle(80, 210, 12);
+			pixmap.setColor(Color.YELLOW);
+			for (int i = 0; i < 13; i++) {
+				int y = (int) (50 + i * (5 + i / 2f));
+				pixmap.drawLine(70 - i * 2, y, 90 + i * 2, y);
+			}
+			texture = new Texture(pixmap);
+			pixmap.dispose();
+			body = new Image(texture);
+			// group
+			group.addActor(body);
+			group.addActor(bar);
+		}
+
+		private void increaseSpeed() {
+			if (metrobarRotationPeriod > .2f) {
+				metrobarRotationPeriod -= .1f;
+			} else {
+				metrobarRotationPeriod *= .67f;
+			}
+			System.out.println("Increasing speed to " + metrobarRotationPeriod);
+			Pixmap pixmap = new Pixmap(24, 200, Format.RGBA8888);
+			pixmap.setColor(Color.BLACK);
+			pixmap.fillRectangle(6, 0, 11, 200);
+			pixmap.setColor(Color.LIGHT_GRAY);
+			pixmap.fillRectangle(0, (int) ((1 - metrobarRotationPeriod) * 180), 24, 30);
+			Texture texture = new Texture(pixmap);
+			pixmap.dispose();
+			bar = new Image(texture);
+			bar.setPosition(80 - 12, 90);
+			bar.setOrigin(12, 0);
+			bar.rotateBy(metrobarRotation / 2);
+			bar.addAction(Actions.forever(Actions.sequence(
+					Actions.rotateBy(-metrobarRotation, metrobarRotationPeriod),
+					Actions.rotateBy(metrobarRotation, metrobarRotationPeriod))));
+			group.clear();
+			group.addActor(body);
+			group.addActor(bar);
+		}
+
+		@Override
+		public void setPosition(float x, float y) {
+			group.setPosition(x, y);
+		}
+
+		@Override
+		public void act(float delta) {
+			group.act(delta);
+			super.act(delta);
+		}
+
+		@Override
+		public void draw(Batch batch, float parentAlpha) {
+			group.draw(batch, parentAlpha);
+		}
+	}
+
 	private class Texts extends Actor {
 		BitmapFont font;
 		String[] texts = new String[] { "Richer", "Longer", "Faster" };
@@ -173,10 +251,10 @@ public class LevelUpScreen extends BaseScreen {
 		public void draw(Batch batch, float parentAlpha) {
 			font.setColor(Color.WHITE);
 			font.drawMultiLine(batch, texts[0], -10, 355, 150, HAlignment.RIGHT);
-			font.setColor(new Color(.9f, .9f, .9f, 1f));
+			font.setColor(new Color(.5f, .5f, .5f, 1f));
 			font.drawMultiLine(batch, texts[1], 205, 355, 150, HAlignment.RIGHT);
-			font.setColor(Color.WHITE);
-			font.drawMultiLine(batch, texts[2], 425, 355, 150, HAlignment.RIGHT);
+			font.setColor(Color.BLACK);
+			font.drawMultiLine(batch, texts[2], 420, 355, 150, HAlignment.RIGHT);
 			if (!wait) {
 				font.setColor(Color.BLACK);
 				font.drawMultiLine(batch, "PLAYER " + (playerId + 1) + "\nCHOOSES\n" + playerkeys,

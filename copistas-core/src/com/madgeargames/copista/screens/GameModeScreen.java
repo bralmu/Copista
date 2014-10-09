@@ -104,7 +104,7 @@ public class GameModeScreen extends BaseScreen {
 
 		@Override
 		public void draw(Batch batch, float parentAlpha) {
-			font.drawMultiLine(batch, "v0.15 Mad Gear Games 2014. Created by BrunoXe. ", 230, 20,
+			font.drawMultiLine(batch, "v0.16 Mad Gear Games 2014. Created by BrunoXe. ", 230, 20,
 					200, HAlignment.CENTER);
 		}
 	}
