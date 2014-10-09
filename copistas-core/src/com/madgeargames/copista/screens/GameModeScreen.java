@@ -15,8 +15,9 @@ public class GameModeScreen extends BaseScreen {
 	 * TODO embellecer con music score vertical en derecha e izquierda
 	 * desplazándose y notas flotando semialeatoriamente.
 	 */
-	private final String[] texts = { "-> Practice <-\nTwo players\nHelp",
-			"Practice\n-> Two players <-\nHelp", "Practice\nTwo players\n-> Help <-" };
+	private final String[] texts = { "-> Practice <-\nTwo players\nHelp\nExit",
+			"Practice\n-> Two players <-\nHelp\nExit", "Practice\nTwo players\n-> Help <-\nExit",
+			"Practice\nTwo players\nHelp\n-> Exit <-" };
 	private int selectedOption = 0;
 
 	public GameModeScreen() {
@@ -48,8 +49,11 @@ public class GameModeScreen extends BaseScreen {
 			BattleScreen.twoPlayers = true;
 			Copista.getInstance().setScreen(Copista.getInstance().battleScreen);
 			break;
-		default:
+		case 2:
 			Copista.getInstance().setScreen(Copista.getInstance().helpScreen);
+			break;
+		default:
+			Gdx.app.exit();
 		}
 	}
 
@@ -62,15 +66,15 @@ public class GameModeScreen extends BaseScreen {
 	@Override
 	protected void onPressUp() {
 		if (selectedOption == 0) {
-			selectedOption = 2;
+			selectedOption = 3;
 		} else {
-			selectedOption = (selectedOption - 1) % 3;
+			selectedOption = (selectedOption - 1) % 4;
 		}
 	}
 
 	@Override
 	protected void onPressDown() {
-		selectedOption = (selectedOption + 1) % 3;
+		selectedOption = (selectedOption + 1) % 4;
 	}
 
 	@Override
