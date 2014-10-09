@@ -2,11 +2,14 @@ package com.madgeargames.copista.screens;
 
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.scenes.scene2d.actions.Actions;
+import com.badlogic.gdx.scenes.scene2d.actions.RepeatAction;
 import com.badlogic.gdx.scenes.scene2d.actions.SequenceAction;
 import com.badlogic.gdx.scenes.scene2d.ui.Image;
 import com.madgeargames.copista.Copista;
 
 public class LoadingScreen extends BaseScreen {
+	private boolean loaded = false;
+
 	public LoadingScreen() {
 		Image logo = new Image(new Texture("madgear.png"));
 		logo.setCenterPosition(320, 180);
@@ -15,11 +18,25 @@ public class LoadingScreen extends BaseScreen {
 			@Override
 			public void run() {
 				Copista.getInstance().load2();
-				Copista.charactersSet.characters[Copista.maestroIndex].playMusic();
-				Copista.getInstance().setScreen(Copista.getInstance().introScreen);
+				loaded = true;
+
 			}
 		}));
+		RepeatAction waiting = Actions.forever(Actions.sequence(Actions.delay(1f),
+				Actions.run(new Runnable() {
+
+					@Override
+					public void run() {
+						if (loaded) {
+							loaded = false;
+							Copista.charactersSet.characters[Copista.maestroIndex].playMusic();
+							Copista.getInstance().setScreen(Copista.getInstance().introScreen);
+						}
+
+					}
+				}), Actions.delay(1f)));
 		logo.addAction(shared);
+		logo.addAction(waiting);
 		this.stage.addActor(logo);
 		Image red = new Image(new Texture("madgearR.png"));
 		red.setCenterPosition(187, 243);

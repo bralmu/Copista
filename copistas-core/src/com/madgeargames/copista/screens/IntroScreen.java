@@ -10,8 +10,8 @@ public class IntroScreen extends BaseScreen {
 		Image logo = new Image(new Texture("batallamusical2.png"));
 		logo.setCenterPosition(320, 180);
 		logo.setColor(1, 1, 1, 0);
-		logo.addAction(Actions.sequence(Actions.fadeIn(1f), Actions.delay(2f), Actions.fadeOut(2f),
-				Actions.run(new Runnable() {
+		logo.addAction(Actions.sequence(Actions.fadeIn(5f), Actions.delay(0.1f),
+				Actions.moveBy(0, 80, .5f), Actions.run(new Runnable() {
 
 					@Override
 					public void run() {
