@@ -36,8 +36,8 @@ public class Copista extends Game {
 		charactersSet = new CharactersSet();
 		maestroIndex = (int) (Math.random() * 3);
 		loadingScreen = new LoadingScreen();
-		load2();
-		this.setScreen(levelUpScreen);
+		// load2();
+		this.setScreen(loadingScreen);
 	}
 
 	@Override

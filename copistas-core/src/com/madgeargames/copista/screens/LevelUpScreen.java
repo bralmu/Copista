@@ -1,15 +1,18 @@
 package com.madgeargames.copista.screens;
 
-import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;
+import com.badlogic.gdx.graphics.Pixmap;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.BitmapFont.HAlignment;
+import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.actions.Actions;
 import com.badlogic.gdx.scenes.scene2d.ui.Image;
 import com.madgeargames.copista.Copista;
+import com.madgeargames.copista.notes.NoteSet;
+import com.madgeargames.copista.notes.NoteSetGenerator;
 
 public class LevelUpScreen extends BaseScreen {
 
@@ -81,14 +84,13 @@ public class LevelUpScreen extends BaseScreen {
 	}
 
 	private class Colors extends Actor {
-		Image[] colors = new Image[4];
+		Sprite[] sprites = new Sprite[6];
+		int height = 360;
+		int width = 215;
 		float time = 0;
 
 		public Colors() {
-			colors[0] = new Image(new Texture(Gdx.files.internal("levelupcolors3.png")));
-			colors[1] = new Image(new Texture(Gdx.files.internal("levelupcolors2.png")));
-			colors[2] = new Image(new Texture(Gdx.files.internal("levelupcolors1.png")));
-			colors[3] = new Image(new Texture(Gdx.files.internal("levelupcolors0.png")));
+			generateSprites();
 		}
 
 		@Override
@@ -99,8 +101,28 @@ public class LevelUpScreen extends BaseScreen {
 
 		@Override
 		public void draw(Batch batch, float parentAlpha) {
-			int i = (int) (time / 2) % 4;
-			colors[i].draw(batch, parentAlpha);
+			int i = (int) (time) % 6;
+			sprites[i].draw(batch, parentAlpha);
+		}
+
+		private void generateSprites() {
+			NoteSet noteset = NoteSetGenerator.generateNoteSet(2);
+			for (int i = 2; i < 8; i++) {
+				sprites[i - 2] = generateSprite(noteset);
+				noteset = NoteSetGenerator.increaseNoteSet(noteset);
+			}
+		}
+
+		private Sprite generateSprite(NoteSet noteset) {
+			Pixmap pixmap = new Pixmap(width, height, Pixmap.Format.RGB888);
+			for (int i = 0; i < noteset.size(); i++) {
+				pixmap.setColor(noteset.getNote(i).getColor());
+				pixmap.fillRectangle(((width / noteset.size()) + 1) * i, 0, width / noteset.size(),
+						height);
+			}
+			Texture texture = new Texture(pixmap);
+			pixmap.dispose();
+			return new Sprite(texture);
 		}
 
 	}
@@ -150,9 +172,9 @@ public class LevelUpScreen extends BaseScreen {
 		@Override
 		public void draw(Batch batch, float parentAlpha) {
 			font.setColor(Color.WHITE);
-			font.drawMultiLine(batch, texts[0], -3, 355, 150, HAlignment.RIGHT);
+			font.drawMultiLine(batch, texts[0], -10, 355, 150, HAlignment.RIGHT);
 			font.setColor(new Color(.9f, .9f, .9f, 1f));
-			font.drawMultiLine(batch, texts[1], 217, 355, 150, HAlignment.RIGHT);
+			font.drawMultiLine(batch, texts[1], 205, 355, 150, HAlignment.RIGHT);
 			font.setColor(Color.WHITE);
 			font.drawMultiLine(batch, texts[2], 425, 355, 150, HAlignment.RIGHT);
 			if (!wait) {
