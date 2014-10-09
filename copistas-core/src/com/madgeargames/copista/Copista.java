@@ -26,9 +26,9 @@ public class Copista extends Game {
 			helpScreen, loadingScreen;
 	public static int[] p0keys = new int[] { Keys.NUM_1, Keys.NUM_2, Keys.NUM_3, Keys.NUM_4,
 			Keys.NUM_5, Keys.NUM_6, Keys.NUM_7 };
-	public static String[] p0keysName = new String[] { "1", "2", "3", "4", "5", "6", "7" };
+	public static String[] p0keysName = new String[] { "1", "2", "3", "4", "5", "6", "7", "8" };
 	public static int[] p1keys = new int[] { Keys.Z, Keys.X, Keys.C, Keys.V, Keys.B, Keys.N, Keys.M };
-	public static String[] p1keysName = new String[] { "Z", "X", "C", "V", "B", "N", "M" };
+	public static String[] p1keysName = new String[] { "Z", "X", "C", "V", "B", "N", "M", "," };
 
 	@Override
 	public void create() {
