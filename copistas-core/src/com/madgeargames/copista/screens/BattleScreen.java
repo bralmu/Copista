@@ -230,9 +230,9 @@ public class BattleScreen extends BaseScreen {
 	}
 
 	private static void updateGameOverScreenScores() {
-		GameOverScreen.setPitchIdentificationPoints(currentNoteSet.size());
-		GameOverScreen.setSequenceMemoryPoints(currentSequenceLenght);
-		GameOverScreen.setSpeedPoints((int) ((speed - 2) * 10 / 2));
+		GameOverScreen.setPitchIdentificationPoints(currentNoteSet.size() * 10);
+		GameOverScreen.setSequenceMemoryPoints(currentSequenceLenght * 10);
+		GameOverScreen.setSpeedPoints((int) ((speed - 2) * 10 / 2) * 5);
 	}
 
 	@Override
