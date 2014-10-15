@@ -10,7 +10,6 @@ import com.badlogic.gdx.graphics.g2d.BitmapFont.HAlignment;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.actions.Actions;
 import com.madgeargames.copista.Copista;
-import com.madgeargames.copista.characters.Character;
 import com.madgeargames.copista.notes.NoteSet;
 import com.madgeargames.copista.notes.NoteSetGenerator;
 import com.madgeargames.copista.sequences.Sequence;
@@ -23,7 +22,6 @@ public class BattleScreen extends BaseScreen {
 	EspectroPlayer espectro;
 	MarcadorPuntuacion[] marcadoresPuntuacion = new MarcadorPuntuacion[2];
 	int[] lastSequenceMatched = new int[] { -1, -1 };
-	Character maestro;
 	Actor flowController = new Actor();
 	Texts texts = new Texts();
 	LifeUpdater lifeUpdater = new LifeUpdater();
@@ -51,11 +49,7 @@ public class BattleScreen extends BaseScreen {
 
 	private void addElementsToStage() {
 		stage.addActor(flowController);
-		maestro = Copista.charactersSet.characters[Copista.maestroIndex];
-		maestro.big();
-		maestro.setCenterPosition(640 / 2, 360 - 75);
-		stage.addActor(maestro);
-		espectro = new EspectroPlayer();
+		espectro = new EspectroPlayer(EspectroPlayer.Size.full, null);
 		stage.addActor(espectro);
 		stage.addActor(lifeUpdater);
 		marcadoresPuntuacion[0] = new MarcadorPuntuacion();
@@ -76,7 +70,6 @@ public class BattleScreen extends BaseScreen {
 
 	private void playNextSequence() {
 		// modificaciones visuales en maestro y personajes.
-		maestro.highlight();
 		texts.showPlayer(1, false);
 		texts.showPlayer(2, false);
 		int lastSequenceMatchedCombination;
@@ -89,16 +82,6 @@ public class BattleScreen extends BaseScreen {
 			}
 		} else {
 			lastSequenceMatchedCombination = lastSequenceMatched[0];
-		}
-		switch (lastSequenceMatchedCombination) {
-		case -1:
-			maestro.moodBase();
-			break;
-		case 0:
-			maestro.moodSad();
-			break;
-		case 1:
-			maestro.moodHappy();
 		}
 		// reproducir secuencia, habilitar entrada y modificaciones visuales
 		espectro.showNotes(sequences.get(seqIndex), soundDuration, silenceDuration, currentNoteSet);
@@ -273,7 +256,7 @@ public class BattleScreen extends BaseScreen {
 			addElementsToStage();
 			startBattle();
 		}
-		Copista.charactersSet.characters[Copista.maestroIndex].stopMusic();
+		// TODO: stop music here
 		super.show();
 	}
 

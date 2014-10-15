@@ -7,7 +7,6 @@ import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator;
 import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator.FreeTypeFontParameter;
-import com.madgeargames.copista.characters.CharactersSet;
 import com.madgeargames.copista.screens.BattleScreen;
 import com.madgeargames.copista.screens.GameModeScreen;
 import com.madgeargames.copista.screens.GameOverScreen;
@@ -20,7 +19,6 @@ public class Copista extends Game {
 
 	static Copista instance;
 	public static BitmapFont font;
-	public static CharactersSet charactersSet;
 	public static int maestroIndex;
 	public Screen introScreen, gameModeScreen, battleScreen, levelUpScreen, gameOverScreen,
 			helpScreen, loadingScreen;
@@ -33,7 +31,6 @@ public class Copista extends Game {
 	@Override
 	public void create() {
 		instance = this;
-		charactersSet = new CharactersSet();
 		maestroIndex = (int) (Math.random() * 3);
 		loadingScreen = new LoadingScreen();
 		// load2();
@@ -62,10 +59,6 @@ public class Copista extends Game {
 
 	public static Copista getInstance() {
 		return instance;
-	}
-
-	public static CharactersSet getCharacterSet() {
-		return charactersSet;
 	}
 
 }

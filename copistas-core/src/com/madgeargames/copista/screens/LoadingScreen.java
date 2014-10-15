@@ -29,7 +29,7 @@ public class LoadingScreen extends BaseScreen {
 					public void run() {
 						if (loaded) {
 							loaded = false;
-							Copista.charactersSet.characters[Copista.maestroIndex].playMusic();
+							// TODO: play music here
 							Copista.getInstance().setScreen(Copista.getInstance().introScreen);
 						}
 

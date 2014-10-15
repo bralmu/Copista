@@ -59,7 +59,7 @@ public class GameModeScreen extends BaseScreen {
 
 	@Override
 	public void show() {
-		Copista.charactersSet.characters[Copista.maestroIndex].playMusic();
+		// TODO: play music here
 		super.show();
 	}
 

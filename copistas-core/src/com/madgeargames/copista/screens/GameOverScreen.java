@@ -75,7 +75,7 @@ public class GameOverScreen extends BaseScreen {
 				+ "pts.\nPitch identification \t" + pitchIdentificationPoints
 				+ "pts.\nListening speed \t" + speedPoints + "pts.\n\nMusic copyist hability \t"
 				+ musicCopyistsPoints + "pts.";
-		Copista.charactersSet.characters[Copista.maestroIndex].playMusic();
+		// TODO: play music here
 		super.show();
 	}
 
