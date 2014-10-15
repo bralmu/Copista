@@ -19,7 +19,7 @@ import com.madgeargames.copista.widgets.MarcadorPuntuacion;
 
 public class BattleScreen extends BaseScreen {
 
-	EspectroPlayer espectro;
+	EspectroPlayer espectro, espectroUpper, espectroLower;
 	MarcadorPuntuacion[] marcadoresPuntuacion = new MarcadorPuntuacion[2];
 	int[] lastSequenceMatched = new int[] { -1, -1 };
 	Actor flowController = new Actor();
@@ -50,7 +50,11 @@ public class BattleScreen extends BaseScreen {
 	private void addElementsToStage() {
 		stage.addActor(flowController);
 		espectro = new EspectroPlayer(EspectroPlayer.Size.full, null);
+		espectroUpper = new EspectroPlayer(EspectroPlayer.Size.half, EspectroPlayer.Position.upper);
+		espectroLower = new EspectroPlayer(EspectroPlayer.Size.half, EspectroPlayer.Position.lower);
 		stage.addActor(espectro);
+		stage.addActor(espectroUpper);
+		stage.addActor(espectroLower);
 		stage.addActor(lifeUpdater);
 		marcadoresPuntuacion[0] = new MarcadorPuntuacion();
 		marcadoresPuntuacion[0].setX(640 - marcadoresPuntuacion[0].getWidth());
@@ -65,13 +69,30 @@ public class BattleScreen extends BaseScreen {
 	private void startBattle() {
 		sequences = SequenceGenerator
 				.generateSequences(currentNoteSet, currentSequenceLenght, 1000);
-		playNextSequence();
+		playNextSequence(1f);
+	}
+
+	private void playNextSequence(float preDelay) {
+		// detener barras de vida
+		lifeUpdater.enable(false, 0);
+		lifeUpdater.enable(false, 1);
+
+		flowController.addAction(Actions.sequence(Actions.delay(preDelay),
+				Actions.run(new Runnable() {
+
+					@Override
+					public void run() {
+						playNextSequence();
+
+					}
+				})));
 	}
 
 	private void playNextSequence() {
 		// modificaciones visuales en maestro y personajes.
 		texts.showPlayer(1, false);
 		texts.showPlayer(2, false);
+		@SuppressWarnings("unused")
 		int lastSequenceMatchedCombination;
 		if (twoPlayers) {
 			lastSequenceMatchedCombination = 0;
@@ -84,7 +105,8 @@ public class BattleScreen extends BaseScreen {
 			lastSequenceMatchedCombination = lastSequenceMatched[0];
 		}
 		// reproducir secuencia, habilitar entrada y modificaciones visuales
-		espectro.showNotes(sequences.get(seqIndex), soundDuration, silenceDuration, currentNoteSet);
+		espectro.showNotes(sequences.get(seqIndex), soundDuration, silenceDuration, currentNoteSet,
+				true);
 		System.out.println("Reproduciendo secuencia y esperando "
 				+ sequences.get(seqIndex).sequence.size() * (soundDuration + silenceDuration)
 				+ " segundos.");
@@ -105,9 +127,6 @@ public class BattleScreen extends BaseScreen {
 						}
 					}
 				})));
-		// detener barras de vida
-		lifeUpdater.enable(false, 0);
-		lifeUpdater.enable(false, 1);
 	}
 
 	@Override
@@ -116,6 +135,18 @@ public class BattleScreen extends BaseScreen {
 		if (inputEnabled[playerId] && keyIndex < currentNoteSet.size()) {
 			System.out.println("Es el jugador " + playerId + " y tiene el teclado habilitado");
 			lastTypedSequences.get(playerId).add(keyIndex);
+			// replay note
+			Sequence seq = new Sequence(new int[] { currentNoteSet.getNote(keyIndex).id });
+			if (twoPlayers && playerId == 0) {
+				espectroUpper.showNotes(seq, soundDuration / 2, silenceDuration / 2,
+						currentNoteSet, false);
+			} else if (twoPlayers && playerId == 1) {
+				espectroLower.showNotes(seq, soundDuration / 2, silenceDuration / 2,
+						currentNoteSet, false);
+			} else {
+				espectro.showNotes(seq, soundDuration / 2, silenceDuration / 2, currentNoteSet,
+						false);
+			}
 			if (lastTypedSequences.get(playerId).size() == sequences.get(seqIndex).sequence.size()) {
 				System.out.println("Secuencia completa escrita, deshabilitando teclado");
 				inputEnabled[playerId] = false;
@@ -129,11 +160,16 @@ public class BattleScreen extends BaseScreen {
 					System.out.println("Las secuencias coinciden.");
 					lastSequenceMatched[playerId] = 1;
 					playerCombo[playerId]++;
-					lifeUpdater.enable(true, (playerId + 1) % 2);
+					if (twoPlayers) {
+						lifeUpdater.enable(true, (playerId + 1) % 2);
+					}
 					if (playerCombo[playerId] == 4) {
 						// siguiente nivel
 						System.out.println("Siguiente nivel");
 						comesFromLevelUpScreen = true;
+						espectro.clear();
+						espectroUpper.clear();
+						espectroLower.clear();
 						if (twoPlayers) {
 							LevelUpScreen.setPlayerId((playerId + 1) % 2);
 						} else {
@@ -148,7 +184,7 @@ public class BattleScreen extends BaseScreen {
 								|| !twoPlayers) {
 							seqIndex++;
 							lastTypedSequenceComplete = new boolean[] { false, false };
-							playNextSequence();
+							playNextSequence(1f);
 						}
 					}
 				} else {
@@ -157,9 +193,9 @@ public class BattleScreen extends BaseScreen {
 					lifesLeft[playerId] -= 25;
 					marcadoresPuntuacion[playerId].setValue(lifesLeft[playerId]);
 					playerCombo[playerId] = 0;
-					if (lifesLeft[playerId] == 0) {
+					if (lifesLeft[playerId] <= 0) {
 						// game over
-						System.out.println("Game Over");
+						System.out.println("Game Over 192");
 						Copista.getInstance().setScreen(Copista.getInstance().gameOverScreen);
 					} else {
 						// continuar
@@ -169,7 +205,7 @@ public class BattleScreen extends BaseScreen {
 								|| !twoPlayers) {
 							seqIndex++;
 							lastTypedSequenceComplete = new boolean[] { false, false };
-							playNextSequence();
+							playNextSequence(1f);
 						}
 					}
 				}
@@ -233,7 +269,7 @@ public class BattleScreen extends BaseScreen {
 			playerCombo[0] = 0;
 			playerCombo[1] = 0;
 			seqIndex = 0;
-			playNextSequence();
+			playNextSequence(1f);
 		}
 		if (resetGame) {
 			resetGame = false;
@@ -323,6 +359,7 @@ public class BattleScreen extends BaseScreen {
 
 		public void enable(boolean enable, int player) {
 			this.enabled[player] = enable;
+			System.out.println("Habilitar jugador " + player + " puesto a " + enable);
 		}
 
 		@Override
@@ -332,7 +369,7 @@ public class BattleScreen extends BaseScreen {
 				marcadoresPuntuacion[0].setValue(lifesLeft[0]);
 				if (lifesLeft[0] < 0) {
 					// game over
-					System.out.println("Game Over");
+					System.out.println("Game Over 365");
 					GameOverScreen.setWinner(2);
 					Copista.getInstance().setScreen(Copista.getInstance().gameOverScreen);
 				}
@@ -342,7 +379,7 @@ public class BattleScreen extends BaseScreen {
 				marcadoresPuntuacion[1].setValue(lifesLeft[1]);
 				if (lifesLeft[1] < 0) {
 					// game over
-					System.out.println("Game Over");
+					System.out.println("Game Over 375");
 					GameOverScreen.setWinner(1);
 					Copista.getInstance().setScreen(Copista.getInstance().gameOverScreen);
 				}

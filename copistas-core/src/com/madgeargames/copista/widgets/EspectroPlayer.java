@@ -33,6 +33,12 @@ public class EspectroPlayer extends Actor {
 		zonas.draw(batch, parentAlpha);
 	}
 
+	@Override
+	public void clear() {
+		this.clearActions();
+		generarZonas(new int[] {}, new NoteSet());
+	}
+
 	private void generarZonas(int[] notas, NoteSet noteSet) {
 		int height;
 		int width;
@@ -60,9 +66,11 @@ public class EspectroPlayer extends Actor {
 		}
 	}
 
-	public void showNotes(Sequence sequence, float sustainTime, float silenceTime, NoteSet noteSet) {
+	public void showNotes(Sequence sequence, float sustainTime, float silenceTime, NoteSet noteSet,
+			boolean soundEnabled) {
 		final int[] notas = sequence.toArray();
 		final NoteSet finalNoteSet = noteSet;
+		final boolean sound = soundEnabled;
 		for (int i = 0; i < notas.length; i++) {
 			final int j = i;
 			this.addAction(Actions.sequence(Actions.delay((sustainTime + silenceTime) * i),
@@ -72,7 +80,9 @@ public class EspectroPlayer extends Actor {
 						public void run() {
 							// Show and play note
 							generarZonas(new int[] { notas[j] }, finalNoteSet);
-							playNote(notas[j]);
+							if (sound) {
+								playNote(notas[j]);
+							}
 						}
 					})));
 			this.addAction(Actions.sequence(
