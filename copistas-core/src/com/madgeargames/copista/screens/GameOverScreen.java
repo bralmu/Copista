@@ -20,6 +20,12 @@ public class GameOverScreen extends BaseScreen {
 	public GameOverScreen() {
 		Results results = new Results();
 		stage.addActor(results);
+		touchablePoints.add(new TouchablePoint(0, 0, 1000, "anywhere"));
+	}
+
+	@Override
+	protected void onTouchDown(String touchablePointId) {
+		onPressOk();
 	}
 
 	public static int getSequenceMemoryPoints() {

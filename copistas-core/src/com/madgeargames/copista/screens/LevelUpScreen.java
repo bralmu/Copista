@@ -37,6 +37,10 @@ public class LevelUpScreen extends BaseScreen {
 		metronome = new Metronome();
 		metronome.setPosition(427 + (213 - 160) / 2, (360 - 300) / 2);
 		stage.addActor(metronome);
+		// touchable points
+		touchablePoints.add(new TouchablePoint(640 / 6, 360 / 2, 360, "richer"));
+		touchablePoints.add(new TouchablePoint(640 * 3 / 6, 360 / 2, 360, "longer"));
+		touchablePoints.add(new TouchablePoint(640 * 5 / 6, 360 / 2, 360, "faster"));
 
 	}
 
@@ -60,6 +64,20 @@ public class LevelUpScreen extends BaseScreen {
 				metronome.increaseSpeed();
 				Copista.getInstance().setScreen(Copista.getInstance().battleScreen);
 			}
+		}
+	}
+
+	@Override
+	protected void onTouchDown(String touchablePointId) {
+		if (touchablePointId == "richer") {
+			onPressKey(0, 0);
+			onPressKey(1, 0);
+		} else if (touchablePointId == "longer") {
+			onPressKey(0, 1);
+			onPressKey(1, 1);
+		} else if (touchablePointId == "faster") {
+			onPressKey(0, 2);
+			onPressKey(1, 2);
 		}
 	}
 

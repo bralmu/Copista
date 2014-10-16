@@ -44,7 +44,7 @@ public class Copista extends Game {
 
 	public void load2() {
 		FreeTypeFontGenerator gen = new FreeTypeFontGenerator(
-				Gdx.files.internal("vSHandprinted.otf"));
+				Gdx.files.internal("Grundschrift-Bold.otf"));
 		FreeTypeFontParameter fontparams = new FreeTypeFontParameter();
 		fontparams.characters = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789][_!$%#@|\\/?-+=()*&.;,{}\"´`'<>";
 		fontparams.size = 64;

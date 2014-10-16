@@ -9,6 +9,12 @@ public class HelpScreen extends BaseScreen {
 		Image bg = new Image(new Texture("help.png"));
 		bg.setPosition(32, 50);
 		stage.addActor(bg);
+		touchablePoints.add(new TouchablePoint(0, 0, 1000, "anywhere"));
+	}
+
+	@Override
+	protected void onTouchDown(String touchablePointId) {
+		onPressOk();
 	}
 
 	@Override

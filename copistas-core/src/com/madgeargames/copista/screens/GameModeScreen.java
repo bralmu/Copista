@@ -15,9 +15,9 @@ public class GameModeScreen extends BaseScreen {
 	 * TODO embellecer con music score vertical en derecha e izquierda
 	 * desplazándose y notas flotando semialeatoriamente.
 	 */
-	private final String[] texts = { "-> Practice <-\nTwo players\nHelp\nExit",
-			"Practice\n-> Two players <-\nHelp\nExit", "Practice\nTwo players\n-> Help <-\nExit",
-			"Practice\nTwo players\nHelp\n-> Exit <-" };
+	private final String[] texts = { "-> Practice <-\nVersus\nHelp\nExit",
+			"Practice\n-> Versus <-\nHelp\nExit", "Practice\nVersus\n-> Help <-\nExit",
+			"Practice\nVersus\nHelp\n-> Exit <-" };
 	private int selectedOption = 0;
 
 	public GameModeScreen() {
@@ -29,6 +29,10 @@ public class GameModeScreen extends BaseScreen {
 		stage.addActor(actor);
 		Foot foot = new Foot();
 		stage.addActor(foot);
+		touchablePoints.add(new TouchablePoint(332, 181, 40, "practice"));
+		touchablePoints.add(new TouchablePoint(331, 145, 40, "versus"));
+		touchablePoints.add(new TouchablePoint(330, 110, 40, "help"));
+		touchablePoints.add(new TouchablePoint(330, 68, 40, "exit"));
 	}
 
 	@Override
@@ -40,21 +44,37 @@ public class GameModeScreen extends BaseScreen {
 	protected void onPressOk() {
 		switch (selectedOption) {
 		case 0:
-			BattleScreen.resetGame = true;
-			BattleScreen.twoPlayers = false;
-			Copista.getInstance().setScreen(Copista.getInstance().battleScreen);
+			practice();
 			break;
 		case 1:
-			BattleScreen.resetGame = true;
-			BattleScreen.twoPlayers = true;
-			Copista.getInstance().setScreen(Copista.getInstance().battleScreen);
+			versus();
 			break;
 		case 2:
-			Copista.getInstance().setScreen(Copista.getInstance().helpScreen);
+			help();
 			break;
 		default:
-			Gdx.app.exit();
+			exit();
 		}
+	}
+
+	private void practice() {
+		BattleScreen.resetGame = true;
+		BattleScreen.twoPlayers = false;
+		Copista.getInstance().setScreen(Copista.getInstance().battleScreen);
+	}
+
+	private void versus() {
+		BattleScreen.resetGame = true;
+		BattleScreen.twoPlayers = true;
+		Copista.getInstance().setScreen(Copista.getInstance().battleScreen);
+	}
+
+	private void help() {
+		Copista.getInstance().setScreen(Copista.getInstance().helpScreen);
+	}
+
+	private void exit() {
+		Gdx.app.exit();
 	}
 
 	@Override
@@ -82,17 +102,31 @@ public class GameModeScreen extends BaseScreen {
 		onPressOk();
 	}
 
+	@Override
+	protected void onTouchDown(String touchablePointId) {
+		// System.out.println("Point " + touchablePointId + " touched");
+		if (touchablePointId == "practice") {
+			practice();
+		} else if (touchablePointId == "versus") {
+			versus();
+		} else if (touchablePointId == "help") {
+			help();
+		} else if (touchablePointId == "exit") {
+			exit();
+		}
+	}
+
 	public class Menu extends Actor {
 		BitmapFont font;
 
 		public Menu() {
 			font = Copista.font;// new BitmapFont();
-			font.setColor(Color.BLACK);
-			font.setScale(0.25f);
 		}
 
 		@Override
 		public void draw(Batch batch, float parentAlpha) {
+			font.setColor(Color.BLACK);
+			font.setScale(.5f);
 			font.drawMultiLine(batch, texts[selectedOption], 230, 200, 200, HAlignment.CENTER);
 		}
 	}
@@ -108,8 +142,10 @@ public class GameModeScreen extends BaseScreen {
 
 		@Override
 		public void draw(Batch batch, float parentAlpha) {
-			font.drawMultiLine(batch, "v0.16 Mad Gear Games 2014. Created by BrunoXe. ", 230, 20,
-					200, HAlignment.CENTER);
+			font.drawMultiLine(
+					batch,
+					"v0.16 Mad Gear Games 2014. Created by BrunoXe. Grundschrift font by Christian Urff.",
+					230, 20, 200, HAlignment.CENTER);
 		}
 	}
 

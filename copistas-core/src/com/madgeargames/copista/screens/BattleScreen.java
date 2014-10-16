@@ -69,6 +69,7 @@ public class BattleScreen extends BaseScreen {
 	private void startBattle() {
 		sequences = SequenceGenerator
 				.generateSequences(currentNoteSet, currentSequenceLenght, 1000);
+		updateTouchablePoints();
 		playNextSequence(1f);
 	}
 
@@ -209,6 +210,37 @@ public class BattleScreen extends BaseScreen {
 						}
 					}
 				}
+			}
+		}
+	}
+
+	@Override
+	protected void onTouchDown(String touchablePointId) {
+		int playerId = Character.getNumericValue(touchablePointId.charAt(1));
+		int noteIndex = Character.getNumericValue(touchablePointId.charAt(4));
+		onPressKey(playerId, noteIndex);
+	}
+
+	private void updateTouchablePoints() {
+		touchablePoints.clear();
+		int notesCount = currentNoteSet.size();
+		int radius = 360;
+		int xOffset = 640 / 2 / notesCount;
+		int width = 640 / notesCount;
+		String tpId; // player 0 or 1, note index 0 to 7 (e.g. "p1ni5")
+		for (int i = 1; i <= notesCount; i++) {
+			int x = xOffset + width * (i - 1);
+			if (twoPlayers) {
+				tpId = "p1ni" + (i - 1);
+				TouchablePoint tp = new TouchablePoint(x, 360 / 4, radius, tpId);
+				touchablePoints.add(tp);
+				tpId = "p0ni" + (i - 1);
+				tp = new TouchablePoint(x, 360 * 3 / 4, radius, tpId);
+				touchablePoints.add(tp);
+			} else {
+				tpId = "p0ni" + (i - 1);
+				TouchablePoint tp = new TouchablePoint(x, 360 / 2, radius, tpId);
+				touchablePoints.add(tp);
 			}
 		}
 	}
