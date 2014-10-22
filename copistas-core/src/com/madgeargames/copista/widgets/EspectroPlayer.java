@@ -84,30 +84,34 @@ public class EspectroPlayer extends Actor {
 		final int[] notas = sequence.toArray();
 		final NoteSet finalNoteSet = noteSet;
 		final boolean sound = soundEnabled;
-		for (int i = 0; i < notas.length; i++) {
-			final int j = i;
-			this.addAction(Actions.sequence(Actions.delay((sustainTime + silenceTime) * i),
-					Actions.run(new Runnable() {
+		if (notas.length == 0) {
+			generarZonas(new int[] {}, noteSet);
+		} else {
+			for (int i = 0; i < notas.length; i++) {
+				final int j = i;
+				this.addAction(Actions.sequence(Actions.delay((sustainTime + silenceTime) * i),
+						Actions.run(new Runnable() {
 
-						@Override
-						public void run() {
-							// Show and play note
-							generarZonas(new int[] { notas[j] }, finalNoteSet);
-							if (sound) {
-								playNote(notas[j]);
+							@Override
+							public void run() {
+								// Show and play note
+								generarZonas(new int[] { notas[j] }, finalNoteSet);
+								if (sound) {
+									playNote(notas[j]);
+								}
 							}
-						}
-					})));
-			this.addAction(Actions.sequence(
-					Actions.delay((sustainTime + silenceTime) * i + sustainTime),
-					Actions.run(new Runnable() {
+						})));
+				this.addAction(Actions.sequence(
+						Actions.delay((sustainTime + silenceTime) * i + sustainTime),
+						Actions.run(new Runnable() {
 
-						@Override
-						public void run() {
-							// Hide note
-							generarZonas(new int[] {}, finalNoteSet);
-						}
-					})));
+							@Override
+							public void run() {
+								// Hide note
+								generarZonas(new int[] {}, finalNoteSet);
+							}
+						})));
+			}
 		}
 	}
 

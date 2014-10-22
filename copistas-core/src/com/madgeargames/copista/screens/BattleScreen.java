@@ -78,6 +78,16 @@ public class BattleScreen extends BaseScreen {
 		lifeUpdater.enable(false, 0);
 		lifeUpdater.enable(false, 1);
 
+		// draw grid
+		Sequence emptySequence = new Sequence(new int[] {});
+		espectro.showNotes(emptySequence, soundDuration, silenceDuration, currentNoteSet, false);
+		if (twoPlayers) {
+			espectroUpper.showNotes(emptySequence, soundDuration, silenceDuration, currentNoteSet,
+					false);
+			espectroLower.showNotes(emptySequence, soundDuration, silenceDuration, currentNoteSet,
+					false);
+		}
+
 		flowController.addAction(Actions.sequence(Actions.delay(preDelay),
 				Actions.run(new Runnable() {
 
