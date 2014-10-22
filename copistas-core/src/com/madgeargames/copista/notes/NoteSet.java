@@ -65,4 +65,26 @@ public class NoteSet {
 		return notesIds;
 	}
 
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result + Arrays.hashCode(notes);
+		return result;
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		NoteSet other = (NoteSet) obj;
+		if (!Arrays.equals(notes, other.notes))
+			return false;
+		return true;
+	}
+
 }

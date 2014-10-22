@@ -18,6 +18,7 @@ public class EspectroPlayer extends Actor {
 	Size size;
 	Position position;
 	Music[] sounds = new Music[8];
+	PreRender preRender;
 
 	public EspectroPlayer(Size size, Position position) {
 		this.size = size;
@@ -45,6 +46,25 @@ public class EspectroPlayer extends Actor {
 	}
 
 	private void generarZonas(int[] notas, NoteSet noteSet) {
+		if (notas.length == 1) { // unique note -> we can use preRender
+			if (preRender != null) {
+				if (noteSet.equals(preRender.noteSet)) {
+					zonas = preRender.getSprite(notas[0]);
+				} else {
+					preRender.render(noteSet);
+					zonas = preRender.getSprite(notas[0]);
+				}
+			} else {
+				preRender = new PreRender(noteSet);
+				zonas = preRender.getSprite(notas[0]);
+			}
+		} else { // multinote or empty -> we won't use preRender
+			zonas = render(notas, noteSet);
+		}
+	}
+
+	private Sprite render(int[] notas, NoteSet noteSet) {
+		Sprite sprite;
 		int height;
 		int width;
 		if (size == Size.full) {
@@ -73,10 +93,11 @@ public class EspectroPlayer extends Actor {
 		}
 		Texture texture = new Texture(pixmap);
 		pixmap.dispose();
-		zonas = new Sprite(texture);
+		sprite = new Sprite(texture);
 		if (size == Size.half && position == Position.lower) {
-			zonas.setY(-height);
+			sprite.setY(-height);
 		}
+		return sprite;
 	}
 
 	public void showNotes(Sequence sequence, float sustainTime, float silenceTime, NoteSet noteSet,
@@ -128,5 +149,26 @@ public class EspectroPlayer extends Actor {
 
 	public enum Position {
 		upper, lower;
+	}
+
+	protected class PreRender {
+		NoteSet noteSet;
+		Sprite[] noteSprites;
+
+		public PreRender(NoteSet noteSet) {
+			noteSprites = new Sprite[8];
+			render(noteSet);
+		}
+
+		public void render(NoteSet noteSet) {
+			this.noteSet = noteSet;
+			for (int noteId : noteSet.getIds()) {
+				noteSprites[noteId] = EspectroPlayer.this.render(new int[] { noteId }, noteSet);
+			}
+		}
+
+		public Sprite getSprite(int noteId) {
+			return noteSprites[noteId];
+		}
 	}
 }
