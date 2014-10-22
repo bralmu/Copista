@@ -69,11 +69,11 @@ public class BattleScreen extends BaseScreen {
 	private void startBattle() {
 		sequences = SequenceGenerator
 				.generateSequences(currentNoteSet, currentSequenceLenght, 1000);
-		updateTouchablePoints();
 		playNextSequence(1f);
 	}
 
 	private void playNextSequence(float preDelay) {
+		updateTouchablePoints();
 		// detener barras de vida
 		lifeUpdater.enable(false, 0);
 		lifeUpdater.enable(false, 1);
