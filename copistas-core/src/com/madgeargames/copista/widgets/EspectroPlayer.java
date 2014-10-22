@@ -1,7 +1,7 @@
 package com.madgeargames.copista.widgets;
 
 import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.audio.Sound;
+import com.badlogic.gdx.audio.Music;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Pixmap;
 import com.badlogic.gdx.graphics.Texture;
@@ -17,11 +17,15 @@ public class EspectroPlayer extends Actor {
 	Sprite zonas;
 	Size size;
 	Position position;
+	Music[] sounds = new Music[8];
 
 	public EspectroPlayer(Size size, Position position) {
 		this.size = size;
 		this.position = position;
 		generarZonas(new int[] {}, null);
+		for (int i = 0; i < sounds.length; i++) {
+			sounds[i] = Gdx.audio.newMusic(Gdx.files.internal(i + ".ogg"));
+		}
 	}
 
 	@Override
@@ -108,10 +112,10 @@ public class EspectroPlayer extends Actor {
 	}
 
 	private void playNote(int noteId) {
-		Sound sound = Gdx.audio.newSound(Gdx.files.internal(noteId + ".ogg"));
-		float randomVolume = (float) (0.1 + Math.random() / 10);
-		float randomPan = (float) (-.5 + Math.random());
-		sound.play(randomVolume);
+		if (sounds[noteId].isPlaying()) {
+			sounds[noteId].stop();
+		}
+		sounds[noteId].play();
 	}
 
 	public enum Size {
