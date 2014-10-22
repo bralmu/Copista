@@ -39,6 +39,11 @@ public class Copista extends Game {
 
 	@Override
 	public void render() {
+		try {
+			Thread.sleep((long) (1000 / 25 - Gdx.graphics.getDeltaTime()));
+		} catch (InterruptedException e) {
+			e.printStackTrace();
+		}
 		super.render();
 	}
 
