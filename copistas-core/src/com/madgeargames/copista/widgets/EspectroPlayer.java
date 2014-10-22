@@ -2,6 +2,7 @@ package com.madgeargames.copista.widgets;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.audio.Sound;
+import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Pixmap;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Batch;
@@ -36,7 +37,7 @@ public class EspectroPlayer extends Actor {
 	@Override
 	public void clear() {
 		this.clearActions();
-		generarZonas(new int[] {}, new NoteSet());
+		generarZonas(new int[] {}, new NoteSet(new int[] {}));
 	}
 
 	private void generarZonas(int[] notas, NoteSet noteSet) {
@@ -51,11 +52,19 @@ public class EspectroPlayer extends Actor {
 		Pixmap pixmap = new Pixmap(640, 360, Pixmap.Format.RGBA8888);
 		if (noteSet != null && noteSet.size() > 0) {
 			width = 640 / noteSet.size();
+			// color fill
 			for (int i = 0; i < notas.length; i++) {
 				int noteId = notas[i];
 				int noteIndex = noteSet.getNoteIndex(noteId);
 				pixmap.setColor(noteSet.getNoteById(noteId).getColor());
 				pixmap.fillRectangle(width * noteIndex, 0, width, height);
+			}
+			// grid
+			System.out.println("Drawing " + (noteSet.size() - 1) + " lines.");
+			pixmap.setColor(Color.BLACK);
+			pixmap.drawLine(0, 0, 640, 0);
+			for (int i = 0; i < noteSet.size() - 1; i++) {
+				pixmap.drawLine(width * (i + 1), 0, width * (i + 1), 360);
 			}
 		}
 		Texture texture = new Texture(pixmap);
