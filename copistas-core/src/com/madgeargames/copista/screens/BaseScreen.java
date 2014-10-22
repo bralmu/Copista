@@ -39,6 +39,10 @@ public class BaseScreen implements Screen {
 		touchablePoints = new HashSet<TouchablePoint>();
 		// this.controllersStage.addActor(touchVisualizer);
 		Gdx.input.setInputProcessor(this.controllersStage);
+
+		// override android back key behavior
+		Gdx.input.setCatchBackKey(true);
+
 		this.controllersStage.addListener(new InputListener() {
 			@Override
 			public boolean keyDown(InputEvent event, int keycode) {
