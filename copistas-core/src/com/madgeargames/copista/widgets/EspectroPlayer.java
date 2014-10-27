@@ -1,5 +1,8 @@
 package com.madgeargames.copista.widgets;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.audio.Music;
 import com.badlogic.gdx.graphics.Color;
@@ -19,11 +22,12 @@ public class EspectroPlayer extends Actor {
 	Position position;
 	Music[] sounds = new Music[8];
 	PreRender preRender;
+	List<Texture> textureList = new ArrayList<Texture>();
 
 	public EspectroPlayer(Size size, Position position) {
 		this.size = size;
 		this.position = position;
-		generarZonas(new int[] {}, null);
+		// generarZonas(new int[] {}, null);
 		for (int i = 0; i < sounds.length; i++) {
 			sounds[i] = Gdx.audio.newMusic(Gdx.files.internal(i + ".ogg"));
 		}
@@ -36,7 +40,9 @@ public class EspectroPlayer extends Actor {
 
 	@Override
 	public void draw(Batch batch, float parentAlpha) {
-		zonas.draw(batch, parentAlpha);
+		if (zonas != null) {
+			zonas.draw(batch, parentAlpha);
+		}
 	}
 
 	@Override
@@ -46,20 +52,51 @@ public class EspectroPlayer extends Actor {
 	}
 
 	private void generarZonas(int[] notas, NoteSet noteSet) {
-		if (notas.length == 1) { // unique note -> we can use preRender
+		if (noteSet == null) {
+			System.out.println("ASDF Oh My GodDASDASD");
+		}
+		// if unique note or empty grid -> we can use preRender
+		if (notas.length == 1 || notas.length == 0) {
 			if (preRender != null) {
 				if (noteSet.equals(preRender.noteSet)) {
-					zonas = preRender.getSprite(notas[0]);
+					if (notas.length == 0) {
+						zonas = preRender.getSprite(-1);
+					} else {
+						zonas = preRender.getSprite(notas[0]);
+					}
 				} else {
 					preRender.render(noteSet);
-					zonas = preRender.getSprite(notas[0]);
+					if (notas.length == 0) {
+						zonas = preRender.getSprite(-1);
+					} else {
+						zonas = preRender.getSprite(notas[0]);
+					}
 				}
 			} else {
 				preRender = new PreRender(noteSet);
-				zonas = preRender.getSprite(notas[0]);
+				if (notas.length == 0) {
+					zonas = preRender.getSprite(-1);
+				} else {
+					zonas = preRender.getSprite(notas[0]);
+				}
 			}
-		} else { // multinote or empty -> we won't use preRender
+		} else { // multinote -> we won't use preRender (possible memory leak)
 			zonas = render(notas, noteSet);
+		}
+	}
+
+	/**
+	 * Keeps a maximum of 10 textures on memory
+	 */
+	private void textureGarbageRecolect() {
+		while (true) {
+			System.out.println("Textures size is " + textureList.size());
+			if (textureList.size() > 10) {
+				textureList.get(0).dispose();
+				textureList.remove(0);
+			} else {
+				break;
+			}
 		}
 	}
 
@@ -92,6 +129,8 @@ public class EspectroPlayer extends Actor {
 			}
 		}
 		Texture texture = new Texture(pixmap);
+		textureList.add(texture);
+		textureGarbageRecolect();
 		pixmap.dispose();
 		sprite = new Sprite(texture);
 		if (size == Size.half && position == Position.lower) {
@@ -154,6 +193,7 @@ public class EspectroPlayer extends Actor {
 	protected class PreRender {
 		NoteSet noteSet;
 		Sprite[] noteSprites;
+		Sprite gridSprite;
 
 		public PreRender(NoteSet noteSet) {
 			noteSprites = new Sprite[8];
@@ -165,9 +205,13 @@ public class EspectroPlayer extends Actor {
 			for (int noteId : noteSet.getIds()) {
 				noteSprites[noteId] = EspectroPlayer.this.render(new int[] { noteId }, noteSet);
 			}
+			gridSprite = EspectroPlayer.this.render(new int[] {}, noteSet);
 		}
 
 		public Sprite getSprite(int noteId) {
+			if (noteId == -1) {
+				return gridSprite;
+			}
 			return noteSprites[noteId];
 		}
 	}

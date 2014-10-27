@@ -11,6 +11,7 @@ public class MarcadorPuntuacion extends Actor {
 	float value;
 	float x;
 	Sprite bar;
+	Texture oldTexture;
 
 	public MarcadorPuntuacion() {
 		setValue(100);
@@ -42,7 +43,11 @@ public class MarcadorPuntuacion extends Actor {
 		pixmap.fillRectangle(0, 0, 20, 360);
 		pixmap.setColor(new Color((float) r / 255, (float) g / 255, 0f, 1f));
 		pixmap.fillRectangle(0, 360 - height, 20, height);
+		if (oldTexture != null) {
+			oldTexture.dispose();
+		}
 		Texture texture = new Texture(pixmap);
+		oldTexture = texture;
 		pixmap.dispose();
 		bar = new Sprite(texture);
 		bar.setX(x);
