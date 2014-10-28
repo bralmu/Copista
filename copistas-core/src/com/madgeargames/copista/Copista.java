@@ -18,6 +18,7 @@ import com.madgeargames.copista.screens.LoadingScreen;
 public class Copista extends Game {
 
 	static Copista instance;
+	private final int FPS_LIMIT = -1;
 	public static BitmapFont font;
 	public static int maestroIndex;
 	public Screen introScreen, gameModeScreen, battleScreen, levelUpScreen, gameOverScreen,
@@ -39,10 +40,12 @@ public class Copista extends Game {
 
 	@Override
 	public void render() {
-		try {
-			Thread.sleep((long) (1000 / 25 - Gdx.graphics.getDeltaTime()));
-		} catch (InterruptedException e) {
-			e.printStackTrace();
+		if (FPS_LIMIT > 0) {
+			try {
+				Thread.sleep((long) (1000 / FPS_LIMIT - Gdx.graphics.getDeltaTime()));
+			} catch (InterruptedException e) {
+				e.printStackTrace();
+			}
 		}
 		super.render();
 	}
