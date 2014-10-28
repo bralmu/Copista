@@ -60,12 +60,14 @@ public class GameModeScreen extends BaseScreen {
 	private void practice() {
 		BattleScreen.resetGame = true;
 		BattleScreen.twoPlayers = false;
+		((LevelUpScreen) (Copista.getInstance().levelUpScreen)).resetMetronome();
 		Copista.getInstance().setScreen(Copista.getInstance().battleScreen);
 	}
 
 	private void versus() {
 		BattleScreen.resetGame = true;
 		BattleScreen.twoPlayers = true;
+		((LevelUpScreen) (Copista.getInstance().levelUpScreen)).resetMetronome();
 		Copista.getInstance().setScreen(Copista.getInstance().battleScreen);
 	}
 

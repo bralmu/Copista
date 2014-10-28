@@ -48,6 +48,10 @@ public class LevelUpScreen extends BaseScreen {
 		playerId = id;
 	}
 
+	public void resetMetronome() {
+		metronome.reset();
+	}
+
 	@Override
 	protected void onPressKey(int player, int keyIndex) {
 		if (player == playerId && !wait) {
@@ -172,7 +176,9 @@ public class LevelUpScreen extends BaseScreen {
 		Image bar, body;
 		Group group = new Group();
 		float metrobarRotation = 60;
-		float metrobarRotationPeriod = 1f;
+		final float DEFAULT_METROBAR_ROTATION_PERIOD = 1f;
+		float metrobarRotationPeriod = DEFAULT_METROBAR_ROTATION_PERIOD;
+		Texture lastBarTexture;
 
 		public Metronome() {
 			Pixmap pixmap = new Pixmap(24, 200, Format.RGBA8888);
@@ -182,6 +188,7 @@ public class LevelUpScreen extends BaseScreen {
 			pixmap.setColor(Color.LIGHT_GRAY);
 			pixmap.fillRectangle(0, 0, 24, 30);
 			Texture texture = new Texture(pixmap);
+			lastBarTexture = texture;
 			pixmap.dispose();
 			bar = new Image(texture);
 			bar.setPosition(80 - 12, 90);
@@ -211,6 +218,11 @@ public class LevelUpScreen extends BaseScreen {
 			group.addActor(bar);
 		}
 
+		public void reset() {
+			metrobarRotationPeriod = DEFAULT_METROBAR_ROTATION_PERIOD;
+			updateImage();
+		}
+
 		private void increaseSpeed() {
 			if (metrobarRotationPeriod > .2f) {
 				metrobarRotationPeriod -= .1f;
@@ -218,12 +230,20 @@ public class LevelUpScreen extends BaseScreen {
 				metrobarRotationPeriod *= .67f;
 			}
 			System.out.println("Increasing speed to " + metrobarRotationPeriod);
+			updateImage();
+		}
+
+		private void updateImage() {
 			Pixmap pixmap = new Pixmap(24, 200, Format.RGBA8888);
 			pixmap.setColor(Color.BLACK);
 			pixmap.fillRectangle(6, 0, 11, 200);
 			pixmap.setColor(Color.LIGHT_GRAY);
 			pixmap.fillRectangle(0, (int) ((1 - metrobarRotationPeriod) * 180), 24, 30);
+			if (lastBarTexture != null) {
+				lastBarTexture.dispose();
+			}
 			Texture texture = new Texture(pixmap);
+			lastBarTexture = texture;
 			pixmap.dispose();
 			bar = new Image(texture);
 			bar.setPosition(80 - 12, 90);
