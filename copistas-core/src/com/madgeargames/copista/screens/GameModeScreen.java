@@ -144,7 +144,7 @@ public class GameModeScreen extends BaseScreen {
 		public void draw(Batch batch, float parentAlpha) {
 			font.drawMultiLine(
 					batch,
-					"v0.16 Mad Gear Games 2014. Created by BrunoXe. Grundschrift font by Christian Urff.",
+					"v0.17 Mad Gear Games 2014. Created by BrunoXe. Grundschrift font by Christian Urff.",
 					230, 20, 200, HAlignment.CENTER);
 		}
 	}
